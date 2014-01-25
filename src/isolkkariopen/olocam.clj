@@ -14,6 +14,5 @@
     (. (latest-pic) (getRGB x y)) true))
 
 (defn olkkari-open? []
-  (not
-    (= Color/black
-      (pixel 500 100))))
+  (not= Color/black
+      (pixel 500 100)))
