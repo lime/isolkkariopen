@@ -2,11 +2,11 @@
 
 Single purpose app serving info on whether Athene's guild room Olkkari is open at the moment. It infers this by checking the room's webcam feed for light.
 
-Online at http://isolkkariopen.herokuapp.com
+Online at http://www.isolkkariopen.com
 
 ## Running
 
-$ lein run -m is-olkkari-open.web
+    lein run -m isolkkariopen.web
 
 ## License
 
