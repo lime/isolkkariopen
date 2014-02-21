@@ -7,12 +7,14 @@
 
 (defn- fetch-pic! [] (ImageIO/read url))
 
-(def curr-pic (atom (fetch-pic!)))
-(def prev-pic (atom (fetch-pic!)))
+(def history (atom [(fetch-pic!) (fetch-pic!)]))
+
+(defn curr-pic [] (get @history 0))
+(defn prev-pic [] (get @history 1))
 
 (defn update! []
-  (reset! prev-pic @curr-pic)
-  (reset! curr-pic (fetch-pic!)))
+  (let [newHistory [(fetch-pic!) (curr-pic)]]
+    (reset! history newHistory)))
 
 (defn pixel [img x y]
   (new Color (. img (getRGB x y)) true))
@@ -38,7 +40,7 @@
 
 (defn buzz []
   (float
-    (normed-inequality (dataBuffer @curr-pic) (dataBuffer @prev-pic))))
+    (normed-inequality (dataBuffer (curr-pic)) (dataBuffer (prev-pic)))))
 
 (defn olkkari-open? []
-  (not= Color/black (pixel @curr-pic 500 100)))
+  (not= Color/black (pixel (curr-pic) 500 100)))
