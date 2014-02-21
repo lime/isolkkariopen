@@ -5,6 +5,7 @@
             [clojure.core.async :refer [go timeout]]
             [clojure.data.json :as json]
             [monger.core :as mg]
+            [monger.collection :as mc]
             [ring.adapter.jetty :refer [run-jetty]]
             [environ.core :refer [env]]
             [isolkkariopen.history :as history]
@@ -14,9 +15,15 @@
 
 (defn connect-db! [environment]
   (if (= environment "production")
-    (mg/connect-via-uri! (env :mongo-uri))))
-    (mg/connect! { :host "localhost" :port 27017 })
+    (mg/connect-via-uri! (env :mongo-uri))
+    (mg/connect! { :host "localhost" :port 27017 })))
+
+(defn init-db! []
   (mg/set-db! (mg/get-db "isolkkariopen"))
+  (if (not (mc/exists? history/collection))
+    (mc/create history/collection
+      {:capped true
+       :size (settings :history-size)})))
 
 (defn periodically [f periodMillis]  
   (go
@@ -53,6 +60,7 @@
 
 (defn -main [& args]
   (connect-db! (env :environment))
+  (init-db!)
   (let [port (Integer. (or (env :port) 5000))]
     (periodically history/update! (:update-interval-ms settings))
     (run-jetty

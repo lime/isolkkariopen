@@ -3,7 +3,8 @@
             [isolkkariopen.settings :refer [settings]]
             [clj-time.core :as cljt]
             [clj-time.format :as fmt]
-            [monger.collection :as mc])
+            [monger.collection :as mc]
+            [monger.query :as mq])
   (:import [org.bson.types ObjectId]))
 
 (def collection "history")
@@ -11,6 +12,12 @@
 (def prev-pic
   "Previously fetched picture as BufferedImage"
   (atom (olocam/fetch-pic!)))
+
+(defn entriesMapQuery []
+  (mq/with-collection collection
+    (mq/find {})
+    (mq/sort (array-map :_id -1)) ; sorted from newest to oldest by ObjectId
+    (mq/limit (settings :max-history-results))))
 
 (defn entry [currPic prevPic]
   {:buzz (olocam/buzz currPic prevPic)
@@ -22,7 +29,7 @@
   (defn remove-objId [objMap]
     (dissoc objMap :_id))
 
-  (map #(remove-objId (add-timestamp %)) (mc/find-maps collection)))
+  (map #(remove-objId (add-timestamp %)) (entriesMapQuery)))
 
 (defn insert-entry [entry]
   (mc/insert collection (merge entry {:_id (ObjectId.)})))
