@@ -16,24 +16,23 @@
       (f)
       (recur))))
 
-(def jsonheader
-  { :headers {"Content-Type" "application/json"} })
+(def jsonheader { :headers {"Content-Type" "application/json"} })
 
 (defroutes app
-  (GET "/api/buzz" []
+  (GET "/api/history" []
     (merge jsonheader
       {:status 200
-       :body (json/write-str {:buzz (olocam/buzz)})}))
+       :body (json/write-str @olocam/activity)}))
 
-  (GET "/api/open" []
+  (GET "/api/now" []
     (merge jsonheader
       {:status 200
-       :body (json/write-str {:open (olocam/olkkari-open?)})}))
+       :body (json/write-str (olocam/current-activity))}))
 
   (GET "/" []
     {:headers {"Content-Type" "text/html"}
      :status 200
-     :body (template/index (olocam/olkkari-open?) (* 100 (olocam/buzz)))}))
+     :body (template/index (olocam/current-activity))}))
 
 (defn wrap-error-page [handler]
   (fn [req]
@@ -45,7 +44,7 @@
 
 (defn -main [& [port]]
   (let [port (Integer. (or port (env :port) 5000))]
-    (periodically olocam/update! 10000)
+    (periodically olocam/update-activity! 10000)
     (run-jetty
       (-> #'app
         wrap-error-page
