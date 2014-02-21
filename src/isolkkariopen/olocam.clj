@@ -1,5 +1,6 @@
 (ns isolkkariopen.olocam
-  (:require [environ.core :refer [env]]
+  (:require [clojure.math.numeric-tower :refer [abs]]
+            [environ.core :refer [env]]
             [isolkkariopen.settings :refer [settings]])
   (import   [javax.imageio ImageIO]
             [java.awt Color]
@@ -18,7 +19,7 @@
 (defn equality-buffer [buf1 buf2]
   "Boolean buffer through element equality comparison"
   (map
-    #(= (. buf1 (getElem %)) (. buf2 (getElem %)))
+    #(< (abs (-(. buf1 (getElem %)) (. buf2 (getElem %)))) (settings :noise-tolerance))
     (range 0 (. buf1 (getSize)))))  
 
 (defn normed-inequality [buf1 buf2]
