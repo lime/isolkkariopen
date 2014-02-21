@@ -6,8 +6,10 @@
             [clojure.data.json :as json]
             [ring.adapter.jetty :refer [run-jetty]]
             [environ.core :refer [env]]
+            [isolkkariopen.history :as history]
             [isolkkariopen.olocam :as olocam]
-            [isolkkariopen.template :as template]))
+            [isolkkariopen.template :as template]
+            [isolkkariopen.settings :refer [settings]]))
 
 (defn periodically [f periodMillis]  
   (go
@@ -22,17 +24,17 @@
   (GET "/api/history" []
     (merge jsonheader
       {:status 200
-       :body (json/write-str @olocam/activity)}))
+       :body (json/write-str @history/entries)}))
 
   (GET "/api/now" []
     (merge jsonheader
       {:status 200
-       :body (json/write-str (olocam/current-activity))}))
+       :body (json/write-str (history/now))}))
 
   (GET "/" []
     {:headers {"Content-Type" "text/html"}
      :status 200
-     :body (template/index (olocam/current-activity))}))
+     :body (template/index (history/now))}))
 
 (defn wrap-error-page [handler]
   (fn [req]
@@ -44,7 +46,7 @@
 
 (defn -main [& [port]]
   (let [port (Integer. (or port (env :port) 5000))]
-    (periodically olocam/update-activity! 10000)
+    (periodically history/update! (:update-interval-ms settings))
     (run-jetty
       (-> #'app
         wrap-error-page

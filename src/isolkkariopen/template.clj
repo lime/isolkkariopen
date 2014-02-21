@@ -1,7 +1,7 @@
 (ns isolkkariopen.template
   (:require [hiccup.core :refer [html]]))
 
-(defn index [currentActivity]
+(defn index [nowEntry]
   (html
     [:head
       [:title "Is Olkkari open?"]
@@ -11,9 +11,9 @@
         "Is "
         [:a {:href "http://www.athene.fi/toiminta/olocam/"} "Olkkari"] 
         " open?"]
-      [:h2 (if (:open currentActivity) "Yeah baby!" "Nope.")]
+      [:h2 (if (:open nowEntry) "Yeah baby!" "Nope.")]
       [:p
-        (str "Current buzz: " (format "%.1f" (* 100 (:buzz currentActivity))) " %") ]
+        (str "Current buzz: " (format "%.1f" (* 100 (:buzz nowEntry))) " %") ]
       [:ul
         [:li
           "API: "

@@ -1,11 +1,12 @@
 (ns isolkkariopen.olocam
+  (:require [isolkkariopen.settings :refer [settings]])
   (import [javax.imageio ImageIO]
           [java.awt Color]
           [java.net URL]))
 
-(def url (new URL "http://www.athene.fi/olocam/latest.jpg"))
+(def url (new URL (:cam-url settings)))
 
-(defn- fetch-pic! [] (ImageIO/read url))
+(defn fetch-pic! [] (ImageIO/read url))
 
 (defn pixel [img x y]
   (new Color (. img (getRGB x y)) true))
@@ -34,26 +35,5 @@
     (normed-inequality (databuffer pic1) (databuffer pic2))))
 
 (defn olkkari-open? [pic]
-  (not= Color/black (pixel pic 500 100)))
-
-
-
-(def history-size 50)
-
-(def prev-pic (atom (fetch-pic!)))
-(def activity (atom (list {:open false :buzz 0.0})))
-
-(defn current-activity [] (first @activity))
-
-(defn create-activity-entry [currPic prevPic]
-  {:open (olkkari-open? currPic)
-   :buzz (buzz currPic prevPic)})
-
-(defn fetch-as-entry! []
-  (let [currPic (fetch-pic!) prevPic @prev-pic]
-    (reset! prev-pic currPic)
-    (create-activity-entry currPic prevPic)))
-
-(defn update-activity! []
-  (reset! activity
-    (take history-size (cons (fetch-as-entry!) @activity))))
+  (not= Color/black
+    (pixel pic (:olkkari-open-x settings) (:olkkari-open-y settings))))
