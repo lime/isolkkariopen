@@ -6,21 +6,26 @@
             [monger.collection :as mc])
   (:import [org.bson.types ObjectId]))
 
-(defn timestamp [dateTime]
-  (fmt/unparse (fmt/formatters :basic-date-time-no-ms) dateTime))
+(def collection "history")
 
-; Previously fetched picture as BufferedImage for comparison
-(def prev-pic (atom (olocam/fetch-pic!)))
+(def prev-pic
+  "Previously fetched picture as BufferedImage"
+  (atom (olocam/fetch-pic!)))
 
 (defn entry [currPic prevPic]
   {:buzz (olocam/buzz currPic prevPic)
-   :open (olocam/olkkari-open? currPic)
-   :time (timestamp (cljt/now))})
+   :open (olocam/olkkari-open? currPic)})
 
-(defn entries [] (map #(dissoc % :_id) (mc/find-maps "history")))
+(defn entries []
+  (defn add-timestamp [objMap]
+    (assoc objMap :time (.getTime (:_id objMap))))
+  (defn remove-objId [objMap]
+    (dissoc objMap :_id))
+
+  (map #(remove-objId (add-timestamp %)) (mc/find-maps collection)))
 
 (defn insert-entry [entry]
-  (mc/insert "history" (merge entry {:_id (ObjectId.)})))
+  (mc/insert collection (merge entry {:_id (ObjectId.)})))
 
 (defn now [] (first (entries)))
 
