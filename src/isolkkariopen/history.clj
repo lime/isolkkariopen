@@ -1,5 +1,6 @@
 (ns isolkkariopen.history
-  (:require [isolkkariopen.olocam :as olocam]
+  (:require [clojure.math.numeric-tower :refer [expt round]]
+            [isolkkariopen.olocam :as olocam]
             [isolkkariopen.settings :refer [settings]]
             [clj-time.core :as cljt]
             [clj-time.format :as fmt]
@@ -19,17 +20,28 @@
     (mq/sort (array-map :_id -1)) ; sorted from newest to oldest by ObjectId
     (mq/limit (settings :max-history-results))))
 
+(defn round-places [number decimals]
+  (let [factor (expt 10 decimals)]
+    (bigdec (/ (round (* factor number)) factor))))
+
 (defn entry [currPic prevPic]
   {:buzz (olocam/buzz currPic prevPic)
    :open (olocam/olkkari-open? currPic)})
 
 (defn entries []
+  "Fetch entries from DB, customizing their display form"
   (defn add-timestamp [objMap]
     (assoc objMap :time (.getTime (:_id objMap))))
   (defn remove-objId [objMap]
     (dissoc objMap :_id))
+  (defn add-pretty-buzz [objMap]
+    (assoc objMap
+      :buzzPretty
+      (str (format "%.1f" (:buzz objMap)) " %")))
 
-  (map #(remove-objId (add-timestamp %)) (entriesMapQuery)))
+  (map
+    #(add-pretty-buzz (remove-objId (add-timestamp %)))
+    (entriesMapQuery)))
 
 (defn insert-entry [entry]
   (mc/insert collection (merge entry {:_id (ObjectId.)})))

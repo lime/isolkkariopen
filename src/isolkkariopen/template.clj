@@ -13,7 +13,8 @@
         " open?"]
       [:h2 (if (:open nowEntry) "Yeah baby!" "Nope.")]
       [:p
-        (str "Current buzz: " (format "%.1f" (* 100 (:buzz nowEntry))) " %") ]
+        "Current buzz: "
+        (:buzzPretty nowEntry)]
       [:ul
         [:li
           "API: "
