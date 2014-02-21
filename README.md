@@ -6,6 +6,9 @@ Online at http://www.isolkkariopen.com
 
 ## Running
 
+Install MongoDB & Leiningen.
+Start MongoDB @ port 27017 (default).
+	
     lein run -m isolkkariopen.web
 
 ## License

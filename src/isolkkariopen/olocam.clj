@@ -1,10 +1,11 @@
 (ns isolkkariopen.olocam
-  (:require [isolkkariopen.settings :refer [settings]])
-  (import [javax.imageio ImageIO]
-          [java.awt Color]
-          [java.net URL]))
+  (:require [environ.core :refer [env]]
+            [isolkkariopen.settings :refer [settings]])
+  (import   [javax.imageio ImageIO]
+            [java.awt Color]
+            [java.net URL]))
 
-(def url (new URL (:cam-url settings)))
+(def url (new URL (settings :cam-url)))
 
 (defn fetch-pic! [] (ImageIO/read url))
 

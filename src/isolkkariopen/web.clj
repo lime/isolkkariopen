@@ -4,12 +4,19 @@
             [compojure.route :as route]
             [clojure.core.async :refer [go timeout]]
             [clojure.data.json :as json]
+            [monger.core :as mg]
             [ring.adapter.jetty :refer [run-jetty]]
             [environ.core :refer [env]]
             [isolkkariopen.history :as history]
             [isolkkariopen.olocam :as olocam]
             [isolkkariopen.template :as template]
             [isolkkariopen.settings :refer [settings]]))
+
+(defn connect-db! [environment]
+  (if (= environment "production")
+    (mg/connect-via-uri! (env :mongo-uri))))
+    (mg/connect! { :host "localhost" :port 27017 })
+  (mg/set-db! (mg/get-db "isolkkariopen"))
 
 (defn periodically [f periodMillis]  
   (go
@@ -24,7 +31,7 @@
   (GET "/api/history" []
     (merge jsonheader
       {:status 200
-       :body (json/write-str @history/entries)}))
+       :body (json/write-str (history/entries))}))
 
   (GET "/api/now" []
     (merge jsonheader
@@ -44,8 +51,9 @@
           {:status 500
            :body (json/write-str {:error (. e getMessage)})})))))
 
-(defn -main [& [port]]
-  (let [port (Integer. (or port (env :port) 5000))]
+(defn -main [& args]
+  (connect-db! (env :environment))
+  (let [port (Integer. (or (env :port) 5000))]
     (periodically history/update! (:update-interval-ms settings))
     (run-jetty
       (-> #'app
