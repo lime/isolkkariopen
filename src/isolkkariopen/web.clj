@@ -13,13 +13,14 @@
             [isolkkariopen.template :as template]
             [isolkkariopen.settings :refer [settings]]))
 
-(defn connect-db! [environment]
-  (if (= environment "production")
-    (mg/connect-via-uri! (env :mongo-uri))
-    (mg/connect! { :host "localhost" :port 27017 })))
+(defn connect-db! []
+  (mg/connect! { :host (:env :mongo-host) :port (int (:env :mongo-port)) })
+  (mg/use-db! (:env :mongo-db-name))
+  (mg/authenticate
+    (mg/get-db (:env :mongo-db-name))
+    (env :mongo-user) (.toCharArray (:env :mongo-pwd))))
 
 (defn init-db! []
-  (mg/set-db! (mg/get-db "isolkkariopen"))
   (if (not (mc/exists? history/collection))
     (mc/create history/collection
       {:capped true
@@ -59,7 +60,7 @@
            :body (json/write-str {:error (. e getMessage)})})))))
 
 (defn -main [& args]
-  (connect-db! (env :environment))
+  (connect-db!)
   (init-db!)
   (let [port (Integer. (or (env :port) 5000))]
     (periodically history/update! (:update-interval-ms settings))
