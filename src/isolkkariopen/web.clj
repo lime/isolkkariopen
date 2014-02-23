@@ -14,11 +14,13 @@
             [isolkkariopen.settings :refer [settings]]))
 
 (defn connect-db! []
-  (mg/connect! { :host (:env :mongo-host) :port (int (:env :mongo-port)) })
-  (mg/use-db! (:env :mongo-db-name))
+  (mg/connect! {
+    :host (env :mongo-host)
+    :port (Integer/parseInt (env :mongo-port)) })
+  (mg/use-db! (env :mongo-db))
   (mg/authenticate
-    (mg/get-db (:env :mongo-db-name))
-    (env :mongo-user) (.toCharArray (:env :mongo-pwd))))
+    (mg/get-db (env :mongo-db))
+    (env :mongo-user) (.toCharArray (env :mongo-pwd))))
 
 (defn init-db! []
   (if (not (mc/exists? history/collection))
