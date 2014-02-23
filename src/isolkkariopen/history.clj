@@ -6,13 +6,20 @@
             [clj-time.format :as fmt]
             [monger.collection :as mc]
             [monger.query :as mq])
-  (:import [org.bson.types ObjectId]))
+  (:import [org.bson.types ObjectId]
+           [org.joda.time DateTime]))
 
 (def collection "history")
 
 (defn round-places [number decimals]
   (let [factor (expt 10 decimals)]
     (bigdec (/ (round (* factor number)) factor))))
+
+(defn unix-epoch-to-datetime [epochTime]
+  (new DateTime epochTime))
+
+(defn datetime-to-iso-8601-string [dateTime]
+  (fmt/unparse (fmt/formatters :basic-date-time-no-ms) dateTime))
 
 (def prev-pic
   "Previously fetched picture as BufferedImage"
@@ -44,7 +51,10 @@
   (dissoc objMap :_id))
 
 (defn add-timestamp [objMap]
-  (assoc objMap :time (objId-as-time objMap)))
+  (assoc objMap :time
+    (datetime-to-iso-8601-string
+      (unix-epoch-to-datetime
+        (objId-as-time objMap)))))
 
 (defn add-pretty-buzz [objMap]
   (assoc objMap
