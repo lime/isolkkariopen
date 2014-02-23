@@ -18,9 +18,6 @@
 (defn unix-epoch-to-datetime [epochTime]
   (new DateTime epochTime))
 
-(defn datetime-to-iso-8601-string [dateTime]
-  (fmt/unparse (fmt/formatters :basic-date-time-no-ms) dateTime))
-
 (def prev-pic
   "Previously fetched picture as BufferedImage"
   (atom (olocam/fetch-pic!)))
@@ -52,9 +49,8 @@
 
 (defn add-timestamp [objMap]
   (assoc objMap :time
-    (datetime-to-iso-8601-string
-      (unix-epoch-to-datetime
-        (objId-as-time objMap)))))
+    (.toString (unix-epoch-to-datetime
+      (objId-as-time objMap)))))
 
 (defn add-pretty-buzz [objMap]
   (assoc objMap
