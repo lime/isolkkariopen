@@ -10,70 +10,79 @@
 
 (def collection "history")
 
+(defn round-places [number decimals]
+  (let [factor (expt 10 decimals)]
+    (bigdec (/ (round (* factor number)) factor))))
+
 (def prev-pic
   "Previously fetched picture as BufferedImage"
   (atom (olocam/fetch-pic!)))
 
-(defn entriesMapQuery []
+(defn qry-entries []
   (mq/with-collection collection
     (mq/find {})
     (mq/sort (array-map :_id -1)) ; sorted from newest to oldest by ObjectId
     (mq/limit (settings :max-history-results))))
 
-(defn lastOpenQuery []
-  (first (mq/with-collection collection
-    (mq/find {:open true})
-    (mq/sort (array-map :_id -1))
-    (mq/limit 1))))
-
-(defn nowQuery []
+(defn qry-newest-entry []
   (first (mq/with-collection collection
     (mq/find {})
     (mq/sort (array-map :_id -1))
     (mq/limit 1))))
 
-(defn round-places [number decimals]
-  (let [factor (expt 10 decimals)]
-    (bigdec (/ (round (* factor number)) factor))))
+(defn qry-last-open-entry []
+  (first (mq/with-collection collection
+    (mq/find {:open true})
+    (mq/sort (array-map :_id -1))
+    (mq/limit 1))))
 
-(defn entry [currPic prevPic]
-  {:buzz (olocam/buzz currPic prevPic)
-   :open (olocam/olkkari-open? currPic)})
+; Mongo object tweaks
+(defn objId-as-time [objMap]
+  (.getTime (:_id objMap)))
 
 (defn remove-objId [objMap]
   (dissoc objMap :_id))
 
-(defn output [objMap]
-  (defn add-timestamp [objMap]
-    (assoc objMap :time (.getTime (:_id objMap))))
-  (defn add-pretty-buzz [objMap]
-    (assoc objMap
-      :buzzPretty
-      (str (format "%.1f" (:buzz objMap)) " %")))
+(defn add-timestamp [objMap]
+  (assoc objMap :time (objId-as-time objMap)))
+
+(defn add-pretty-buzz [objMap]
+  (assoc objMap
+    :buzzPretty
+    (str (format "%.1f" (:buzz objMap)) " %")))
+
+(defn add-last-open [objMap]
+  (assoc objMap
+    :last-open
+      (let [lopen (:time (qry-last-open-entry))]
+        (if (nil? lopen)
+          ""
+          lopen))))
+
+(defn format-entry [objMap]
+  "Prepare entry for JSON output. Add timestamp and pretty buzz string, remove Mongo ObjectId."
   (add-pretty-buzz (remove-objId (add-timestamp objMap))))
 
-(defn entries []
-  "Fetch entries from DB, customizing their display form"
-  (map
-    #(output %)
-    (entriesMapQuery)))
+(defn insert-entry! [dbEntry]
+  "Insert entry into history database."
+  ; Monger recommends manual ObjectId creation as below
+  (mc/insert collection (merge dbEntry {:_id (ObjectId.)})))
 
-(defn last-open []
-  (output (:time lastOpenQuery)))
+(defn db-entry [currPic prevPic]
+  {:buzz (olocam/buzz currPic prevPic)
+   :open (olocam/olkkari-open? currPic)})
 
-(defn insert-entry [entry]
-  (mc/insert collection (merge entry {:_id (ObjectId.)})))
-
-(defn now []
-  (let [lopen (:time lastOpenQuery)]
-    (output
-      (if (nil? lopen)
-        (nowQuery)
-        (assoc (nowQuery) :last-open (last-open))))))
-
-(defn fetch-as-entry! []
+(defn fetch-pic-as-entry! []
   (let [currPic (olocam/fetch-pic!) prevPic @prev-pic]
     (reset! prev-pic currPic)
-    (entry currPic prevPic)))
+    (db-entry currPic prevPic)))
 
-(defn update! [] (insert-entry (fetch-as-entry!)))
+(defn update! [] (insert-entry! (fetch-pic-as-entry!)))
+
+(defn entries []
+  "Fetch entries from DB, customizing their display form."
+  (map #(format-entry %) (qry-entries)))
+
+(defn newest-entry []
+  "Newest entry from DB, enhanced with last open data."
+  (format-entry (add-last-open (qry-newest-entry))))

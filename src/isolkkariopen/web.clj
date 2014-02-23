@@ -46,12 +46,12 @@
   (GET "/api/now" []
     (merge jsonheader
       {:status 200
-       :body (json/write-str (history/now))}))
+       :body (json/write-str (history/newest-entry))}))
 
   (GET "/" []
     {:headers {"Content-Type" "text/html"}
      :status 200
-     :body (template/index (history/now))}))
+     :body (template/index (history/newest-entry))}))
 
 (defn wrap-error-page [handler]
   (fn [req]
