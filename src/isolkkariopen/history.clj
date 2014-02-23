@@ -43,30 +43,33 @@
 (defn remove-objId [objMap]
   (dissoc objMap :_id))
 
-(defn entries []
-  "Fetch entries from DB, customizing their display form"
+(defn output [objMap]
   (defn add-timestamp [objMap]
     (assoc objMap :time (.getTime (:_id objMap))))
   (defn add-pretty-buzz [objMap]
     (assoc objMap
       :buzzPretty
       (str (format "%.1f" (:buzz objMap)) " %")))
-  
+  (add-pretty-buzz (remove-objId (add-timestamp objMap))))
+
+(defn entries []
+  "Fetch entries from DB, customizing their display form"
   (map
-    #(add-pretty-buzz (remove-objId (add-timestamp %)))
+    #(output %)
     (entriesMapQuery)))
 
 (defn last-open []
-  (remove-objId (:time lastOpenQuery)))
+  (output (:time lastOpenQuery)))
 
 (defn insert-entry [entry]
   (mc/insert collection (merge entry {:_id (ObjectId.)})))
 
 (defn now []
   (let [lopen (:time lastOpenQuery)]
-    (if (nil? lopen)
-      (remove-objId (nowQuery))
-      (assoc (nowQuery) :last-open (last-open)))))
+    (output
+      (if (nil? lopen)
+        (nowQuery)
+        (assoc (nowQuery) :last-open (last-open))))))
 
 (defn fetch-as-entry! []
   (let [currPic (olocam/fetch-pic!) prevPic @prev-pic]
