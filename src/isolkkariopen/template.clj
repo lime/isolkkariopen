@@ -14,7 +14,12 @@
       [:h2 (if (:open nowEntry) "Yeah baby!" "Nope.")]
       [:p
         "Current buzz: "
-        (:buzzPretty nowEntry)]
+        (:buzzPretty nowEntry)
+        [:br]
+        "Last open: "
+        (if (clojure.string/blank? (:lastOpen nowEntry))
+          "no data :("
+          (:lastOpen nowEntry))]
       [:ul
         [:li
           "API: "

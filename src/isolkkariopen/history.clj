@@ -59,7 +59,7 @@
 
 (defn add-last-open [objMap]
   (assoc objMap
-    :last-open
+    :lastOpen
       (let [lopen (:time (qry-last-open-entry))]
         (if (nil? lopen)
           ""
