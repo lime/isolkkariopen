@@ -55,7 +55,7 @@
 (defn add-pretty-buzz [objMap]
   (assoc objMap
     :buzzPretty
-    (str (format "%.1f" (:buzz objMap)) " %")))
+    (str (format "%.1f" (* 100 (:buzz objMap))) " %")))
 
 (defn add-last-open [objMap]
   (assoc objMap
