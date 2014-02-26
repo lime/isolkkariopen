@@ -33,8 +33,10 @@
       (count eqbf))))
 
 (defn buzz [pic1 pic2]
-  (float
-    (normed-inequality (databuffer pic1) (databuffer pic2))))
+  (min 1
+    (* (settings :buzz-multiplier)
+      (float
+        (normed-inequality (databuffer pic1) (databuffer pic2))))))
 
 (defn olkkari-open? [pic]
   (not= Color/black
