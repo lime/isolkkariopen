@@ -40,6 +40,12 @@
     (mq/sort (array-map :_id -1))
     (mq/limit 1))))
 
+(defn qry-last-closed-entry []
+  (first (mq/with-collection collection
+    (mq/find {:open false})
+    (mq/sort (array-map :_id -1))
+    (mq/limit 1))))
+
 ; Mongo object tweaks
 (defn objId-as-time [objMap]
   (.getTime (:_id objMap)))
@@ -65,9 +71,13 @@
   (assoc objMap
     :lastOpen
       (let [lopen (:time (format-entry (qry-last-open-entry)))]
-        (if (nil? lopen)
-          ""
-          lopen))))
+        (if (nil? lopen) "" lopen))))
+
+(defn add-last-closed [objMap]
+  (assoc objMap
+    :lastClosed
+    (let [lclosed (:time (format-entry (qry-last-closed-entry)))]
+      (if (nil? lclosed) "" lclosed))))
 
 (defn insert-entry! [dbEntry]
   "Insert entry into history database."
@@ -91,4 +101,4 @@
 
 (defn newest-entry []
   "Newest entry from DB, enhanced with last open data."
-  (format-entry (add-last-open (qry-newest-entry))))
+  (format-entry (add-last-closed (add-last-open (qry-newest-entry)))))

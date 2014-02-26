@@ -19,7 +19,12 @@
         "Last open: "
         (if (clojure.string/blank? (:lastOpen nowEntry))
           "no data :("
-          (:lastOpen nowEntry))]
+          (:lastOpen nowEntry))
+        [:br]
+        "Last closed: "
+        (if (clojure.string/blank? (:lastClosed nowEntry))
+          "no data :("
+          (:lastClosed nowEntry))]
       [:ul
         [:li
           "API: "
