@@ -7,7 +7,8 @@
             [monger.collection :as mc]
             [monger.query :as mq])
   (:import [org.bson.types ObjectId]
-           [org.joda.time DateTime]))
+           [org.joda.time DateTime Period PeriodType]
+           [org.joda.time.format PeriodFormat]))
 
 (def collection "history")
 
@@ -53,14 +54,24 @@
 (defn remove-objId [objMap]
   (dissoc objMap :_id))
 
+(defn timestamp-datetime [objMap]
+  (unix-epoch-to-datetime (objId-as-time objMap)))
+
 (defn add-timestamp [objMap]
   (assoc objMap :time
-    (.toString (unix-epoch-to-datetime
-      (objId-as-time objMap)))))
+    (.toString (timestamp-datetime objMap))))
+
+(defn datetime-until-now [datetime]
+  (def no-millis (.withMillisRemoved (PeriodType/standard)))
+  (new Period datetime (cljt/now) no-millis))
+
+(defn ago-string [datetime]
+  (str
+    (.print (PeriodFormat/getDefault) (datetime-until-now datetime))
+    " ago"))
 
 (defn add-pretty-buzz [objMap]
-  (assoc objMap
-    :buzzPretty
+  (assoc objMap :buzzPretty
     (str (format "%.1f" (* 100 (:buzz objMap))) " %")))
 
 (defn format-entry [objMap]
@@ -68,16 +79,20 @@
   (add-pretty-buzz (remove-objId (add-timestamp objMap))))
 
 (defn add-last-open [objMap]
-  (assoc objMap
-    :lastOpen
-      (let [lopen (:time (format-entry (qry-last-open-entry)))]
-        (if (nil? lopen) "" lopen))))
+  (let [last-open (timestamp-datetime (qry-last-open-entry))]
+    (assoc objMap
+      :lastOpen
+        (if (nil? last-open) "" (.toString last-open))
+      :lastOpenAgo
+        (if (nil? last-open) "" (ago-string last-open)))))
 
 (defn add-last-closed [objMap]
-  (assoc objMap
-    :lastClosed
-    (let [lclosed (:time (format-entry (qry-last-closed-entry)))]
-      (if (nil? lclosed) "" lclosed))))
+  (let [last-closed (timestamp-datetime (qry-last-closed-entry))]
+    (assoc objMap
+      :lastClosed
+        (if (nil? last-closed) "" (.toString last-closed))
+      :lastClosedAgo
+        (if (nil? last-closed) "" (ago-string last-closed)))))
 
 (defn insert-entry! [dbEntry]
   "Insert entry into history database."
