@@ -57,17 +57,17 @@
     :buzzPretty
     (str (format "%.1f" (* 100 (:buzz objMap))) " %")))
 
-(defn add-last-open [objMap]
-  (assoc objMap
-    :lastOpen
-      (let [lopen (:time (qry-last-open-entry))]
-        (if (nil? lopen)
-          ""
-          lopen))))
-
 (defn format-entry [objMap]
   "Prepare entry for JSON output. Add timestamp and pretty buzz string, remove Mongo ObjectId."
   (add-pretty-buzz (remove-objId (add-timestamp objMap))))
+
+(defn add-last-open [objMap]
+  (assoc objMap
+    :lastOpen
+      (let [lopen (:time (format-entry (qry-last-open-entry)))]
+        (if (nil? lopen)
+          ""
+          lopen))))
 
 (defn insert-entry! [dbEntry]
   "Insert entry into history database."
