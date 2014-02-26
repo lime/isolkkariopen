@@ -12,6 +12,7 @@
                  [ring/ring-devel "1.1.0"]
                  [environ "0.2.1"]
                  [hiccup "1.0.4"]
+                 [garden "1.1.5"]
                  [clj-time "0.6.0"]
                  [com.novemberain/monger "1.7.0"]]
   :min-lein-version "2.0.0"

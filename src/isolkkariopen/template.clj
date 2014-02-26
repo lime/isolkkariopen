@@ -1,5 +1,6 @@
 (ns isolkkariopen.template
-  (:require [hiccup.core :refer [html]]))
+  (:require [hiccup.core :refer [html]]
+            [garden.core :refer [css]]))
 
 (def placeholder "no data :(")
 
@@ -20,11 +21,27 @@
 (defn- last-opposite-info [entry]
   ((if (:open entry) last-closed-info last-open-info) entry))
 
+(def style
+  (css
+    [:body {
+      :font-family "Helvetica"
+      :text-align  "center"
+      :line-height "50px"
+      :margin      "50px" }]
+    [:h1 {
+      :font-size   "32px"
+      :color       "#999" }]
+    [:h2 {
+      :font-size "64px" }]
+    [:ul {
+      :list-style-type "none"
+      :padding 0 }]))
+
 (defn index [now-entry]
   (html
     [:head
       [:title "Is Olkkari open?"]
-      [:style "body { font-family: 'Helvetica'; text-align: center; margin: 50px; line-height: 50px; } h1 { font-size: 32px; color: #999; } h2 { font-size: 64px; } ul { list-style-type: none; padding: 0; }"]]
+      [:style style]]
     [:body
       [:h1
         "Is "
