@@ -6,7 +6,7 @@
   :cam-url             "http://www.athene.fi/olocam/latest.jpg"
   :history-size        (-> 400 megabytes)
   
-  :noise-tolerance     20
+  :noise-tolerance     5
   :max-history-results 100
   :olkkari-open-x      500
   :olkkari-open-y      100
