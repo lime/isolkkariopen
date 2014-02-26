@@ -62,8 +62,8 @@
     (.toString (timestamp-datetime objMap))))
 
 (defn datetime-until-now [datetime]
-  (def no-millis (.withMillisRemoved (PeriodType/standard)))
-  (new Period datetime (cljt/now) no-millis))
+  (def minute-precision (.withSecondsRemoved (.withMillisRemoved (PeriodType/standard))))
+  (new Period datetime (cljt/now) minute-precision))
 
 (defn ago-string [datetime]
   (str
