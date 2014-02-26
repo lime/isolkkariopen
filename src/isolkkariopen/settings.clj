@@ -9,7 +9,7 @@
   :buzz-multiplier     2
   :noise-tolerance     5
   :max-history-results 100
-  :olkkari-open-x      500
-  :olkkari-open-y      100
+  :olkkari-open-x      600
+  :olkkari-open-y      400
   :update-interval-ms  10000
 })
