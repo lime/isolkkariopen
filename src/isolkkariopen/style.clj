@@ -3,48 +3,39 @@
             [garden.units :refer [px em]]))
 
 (defstyles style
-  (def ribbon-shadow "0 0 10px rgba(0,0,0,0.5)")
-  (def ribbon-text-shadow "0 0 10px rgba(0,0,0,0.31)")
-  (def ribbon-rotate "rotate(45deg)")
-
+  :vendors ["webkit" "moz" "o"]
   [:body :html {
+    :background  "#eee"
     :overflow-x  "hidden"}]
+    :font-size   (px 18)
   [:body {
     :font-family "'Open Sans', Arial, sans-serif"
     :text-align  "center"
     :line-height (px 50)
     :margin      (px 50)}]
   [:h1 {
-    :font-size   (px 32)
-    :font-family "'Helvetica Neue', Helvetica, Arial, sans-serif"
-    :font-weight "normal"
+    :font {
+      :family "'Helvetica Neue', Helvetica, Arial, sans-serif"
+      :size   (px 32)
+      :weight "normal"}
     :color       "#999"}]
   [:.huge {
     :font-size   (px 64)
     :line-height (em 2)}]
   [:a {
     :text-decoration "none"}]
+  [:hr {
+    :border "1px dashed #ccc"}]
   [:#ribbon {
-    :position    "fixed"
     :top         (px 42)
     :right       (px -42)
     :width       (px 200)
     :padding-top (px 1)
-    :background-color "#c00"
-    :background-image   "-webkit-linear-gradient(linear, left top, left bottom, from(rgba(0, 0, 0, 0)), to(rgba(0, 0, 0, 0.15)))"
-    :box-shadow         ribbon-shadow
-    :-moz-box-shadow    ribbon-shadow
-    :-webkit-box-shadow ribbon-shadow
-    :-moz-transform     ribbon-rotate
-    :-webkit-transform  ribbon-rotate
-    :-o-transform       ribbon-rotate
-    :-ms-transform      ribbon-rotate
-    :transform          ribbon-rotate
-    }
+    :position           "fixed"
+    :background-color   "#c00"}
     [:a {
       :color           "#eee"
       :display         "block"
-      :font-family     "700 13px 'Helvetica Neue', Helvetica, Arial, sans-serif"
       :font-weight     500
       :padding-top     (px 1)
       :height          (px 24)
@@ -53,6 +44,8 @@
       :text-decoration "none"
       :font-size       (px 16)
       :border          "1px solid rgba(255,255,255,0.3)"
-      :text-shadow     ribbon-text-shadow
-    }]
-  ])
+      :text-shadow     "0 0 10px rgba(0,0,0,0.31)"}]]
+  [:#ribbon ^{:prefix true :vendors [:webkit :moz :o]} {
+    :box-shadow       "0 0 10px rgba(0,0,0,0.5)"
+    :transform        "rotate(45deg)"
+  }])

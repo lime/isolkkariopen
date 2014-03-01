@@ -34,6 +34,7 @@
       :id "style"
       :stylesheet isolkkariopen.style/style
       :compiler {
+        ;:vendors [:webkit :moz :o] ; not working for some reason
         :output-to "resources/public/css/style.css"
         :pretty-print? false}}]}
   :uberjar-name "isolkkariopen-standalone.jar")
