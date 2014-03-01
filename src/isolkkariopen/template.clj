@@ -29,12 +29,13 @@
     (def ribbon-text-shadow "0 0 10px rgba(0,0,0,0.31)")
     (def ribbon-rotate "rotate(45deg)")
 
+    [:body :html {
+      :overflow-x  "hidden" }]
     [:body {
       :font-family "Helvetica"
       :text-align  "center"
       :line-height (px 50)
-      :margin      (px 50)
-      :overflow-x  "hidden"}]
+      :margin      (px 50) }]
     [:h1 {
       :font-size   (px 32)
       :font-weight "normal"
@@ -45,7 +46,7 @@
     [:a {
       :text-decoration "none" }]
     [:#ribbon {
-      :position    "absolute"
+      :position    "fixed"
       :top         (px 42)
       :right       (px -42)
       :width       (px 200)
