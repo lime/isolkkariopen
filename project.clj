@@ -18,7 +18,9 @@
                  [com.novemberain/monger "1.7.0"]
                  [cljs-ajax "0.2.3"]]
   :min-lein-version "2.0.0"
-  :plugins [[environ/environ.lein "0.2.1"][lein-cljsbuild "1.0.2"]]
+  :plugins [[environ/environ.lein "0.2.1"]
+            [lein-cljsbuild "1.0.2"]
+            [lein-garden "0.1.6"]]
   :hooks [environ.leiningen.hooks leiningen.cljsbuild]
   :cljsbuild {
     :builds [{
@@ -27,4 +29,11 @@
           :output-to "resources/public/js/compiled/main.js"
           :optimizations :whitespace
           :pretty-print true}}]}
+  :garden
+    {:builds [{
+      :id "style"
+      :stylesheet isolkkariopen.style/style
+      :compiler {
+        :output-to "resources/public/css/style.css"
+        :pretty-print? false}}]}
   :uberjar-name "isolkkariopen-standalone.jar")
