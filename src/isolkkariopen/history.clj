@@ -62,7 +62,8 @@
     (.toString (timestamp-datetime objMap))))
 
 (defn datetime-until-now [datetime]
-  (def minute-precision (.withSecondsRemoved (.withMillisRemoved (PeriodType/standard))))
+  (def minute-precision
+    (.withSecondsRemoved (.withMillisRemoved (PeriodType/standard))))
   (new Period datetime (cljt/now) minute-precision))
 
 (defn ago-string [datetime]
@@ -79,20 +80,20 @@
   (add-pretty-buzz (remove-objId (add-timestamp objMap))))
 
 (defn add-last-open [objMap]
-  (let [last-open (timestamp-datetime (qry-last-open-entry))]
+  (let [last-open (qry-last-open-entry)]
     (assoc objMap
       :lastOpen
-        (if (nil? last-open) "" (.toString last-open))
+        (if (nil? last-open) "" (.toString (timestamp-datetime last-open)))
       :lastOpenAgo
-        (if (nil? last-open) "" (ago-string last-open)))))
+        (if (nil? last-open) "" (ago-string (timestamp-datetime last-open))))))
 
 (defn add-last-closed [objMap]
-  (let [last-closed (timestamp-datetime (qry-last-closed-entry))]
+  (let [last-closed (qry-last-closed-entry)]
     (assoc objMap
       :lastClosed
-        (if (nil? last-closed) "" (.toString last-closed))
+        (if (nil? last-closed) "" (.toString (timestamp-datetime last-closed)))
       :lastClosedAgo
-        (if (nil? last-closed) "" (ago-string last-closed)))))
+        (if (nil? last-closed) "" (ago-string (timestamp-datetime last-closed))))))
 
 (defn insert-entry! [dbEntry]
   "Insert entry into history database."
