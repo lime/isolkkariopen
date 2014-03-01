@@ -4,7 +4,7 @@
 (defn by-id [id]
   (.getElementById js/document id))
 
-(defn log-error [{:keys [status status-text response]}]
+(defn log-error! [{:keys [status status-text response]}]
   (.log js/console (str "Got " status " " status-text ", response: " response)))
 
 (defn get-history! [handler error-handler]
@@ -12,7 +12,7 @@
     :handler handler
     :error-handler error-handler }))
 
-(defn visualize-history [history]
+(defn visualize-history! [history]
   (def historyJs (clj->js (take 15 (reverse history))))
   
   (def buzzArr (map #(.-buzz %) historyJs))
@@ -46,4 +46,4 @@
     (new js/Chart (.getContext (by-id "history") "2d"))
     data options))
 
-(get-history! visualize-history log-error)
+(get-history! visualize-history! log-error!)
