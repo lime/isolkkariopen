@@ -15,7 +15,8 @@
                  [hiccup "1.0.4"]
                  [garden "1.1.5"]
                  [clj-time "0.6.0"]
-                 [com.novemberain/monger "1.7.0"]]
+                 [com.novemberain/monger "1.7.0"]
+                 [cljs-ajax "0.2.3"]]
   :min-lein-version "2.0.0"
   :plugins [[environ/environ.lein "0.2.1"][lein-cljsbuild "1.0.2"]]
   :hooks [environ.leiningen.hooks leiningen.cljsbuild]
