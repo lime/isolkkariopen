@@ -7,6 +7,7 @@
                  [org.clojure/core.async "0.1.267.0-0d7780-alpha"]
                  [org.clojure/data.json "0.2.4"]
                  [org.clojure/math.numeric-tower "0.0.4"]
+                 [org.clojure/clojurescript "0.0-2173"]
                  [compojure "1.1.1"]
                  [ring/ring-jetty-adapter "1.1.0"]
                  [ring/ring-devel "1.1.0"]
@@ -16,5 +17,12 @@
                  [clj-time "0.6.0"]
                  [com.novemberain/monger "1.7.0"]]
   :min-lein-version "2.0.0"
-  :plugins [[environ/environ.lein "0.2.1"]]
-  :hooks [environ.leiningen.hooks])
+  :plugins [[environ/environ.lein "0.2.1"][lein-cljsbuild "1.0.2"]]
+  :hooks [environ.leiningen.hooks leiningen.cljsbuild]
+  :cljsbuild {
+    :builds [{
+        :source-paths ["src/isolkkariopen/cljs"]
+        :compiler {
+          :output-to "resources/public/js/compiled/main.js"
+          :optimizations :whitespace
+          :pretty-print true}}]})

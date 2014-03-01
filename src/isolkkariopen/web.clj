@@ -51,7 +51,10 @@
   (GET "/" []
     {:headers {"Content-Type" "text/html"}
      :status 200
-     :body (template/index (history/newest-entry))}))
+     :body (template/index (history/newest-entry))})
+
+  (route/resources "/")
+  (route/not-found "Page not found"))
 
 (defn wrap-error-page [handler]
   (fn [req]

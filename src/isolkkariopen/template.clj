@@ -1,6 +1,7 @@
 (ns isolkkariopen.template
   (:require [hiccup.core :refer [html]]
-            [garden.core :refer [css]]))
+            [garden.core :refer [css]]
+            [hiccup.page :refer [include-js]]))
 
 (def placeholder "no data :(")
 
@@ -60,4 +61,5 @@
           " / "
           [:a {:href "/api/history"} "history"]]
         [:li
-          [:a {:href "http://github.com/joonasrouhiainen/isolkkariopen"} "Fork on Github"]]]]))
+          [:a {:href "http://github.com/joonasrouhiainen/isolkkariopen"} "Fork on Github"]]]
+      (include-js "js/compiled/main.js")]))

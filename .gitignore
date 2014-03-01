@@ -8,3 +8,4 @@ pom.xml
 /checkouts
 /.env
 /target
+/resources/public/js/compiled
