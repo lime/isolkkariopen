@@ -1,1 +1,1 @@
-web: lein with-profile production trampoline run -m isolkkariopen.web
+web: java $JVM_OPTS -cp target/isolkkariopen-standalone.jar clojure.main -m isolkkariopen.web $PORT

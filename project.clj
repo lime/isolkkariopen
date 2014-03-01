@@ -26,4 +26,5 @@
         :compiler {
           :output-to "resources/public/js/compiled/main.js"
           :optimizations :whitespace
-          :pretty-print true}}]})
+          :pretty-print true}}]}
+  :uberjar-name "isolkkariopen-standalone.jar")
