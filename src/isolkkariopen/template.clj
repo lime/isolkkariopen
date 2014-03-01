@@ -64,4 +64,5 @@
           [:a {:href "http://github.com/joonasrouhiainen/isolkkariopen"} "Fork on Github"]]]
       [:canvas {:id "history" :width 600 :height 300}]
       (include-js "js/lib/Chart.min.js")
+      (include-js "js/lib/moment.min.js")
       (include-js "js/compiled/main.js")]))

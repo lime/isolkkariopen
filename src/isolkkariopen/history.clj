@@ -73,7 +73,7 @@
 
 (defn add-pretty-buzz [objMap]
   (assoc objMap :buzzPretty
-    (str (format "%.1f" (* 100 (:buzz objMap))) " %")))
+    (str (format "%.1f" (:buzz objMap)) " %")))
 
 (defn format-entry [objMap]
   "Prepare entry for JSON output. Add timestamp and pretty buzz string, remove Mongo ObjectId."
