@@ -13,7 +13,7 @@
     :error-handler error-handler }))
 
 (defn visualize-history! [history]
-  (def historyJs (clj->js (take 15 (reverse history))))
+  (def historyJs (clj->js (reverse (take 15 history))))
   
   (def buzzArr (map #(.-buzz %) historyJs))
 
