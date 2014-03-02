@@ -23,21 +23,19 @@
   
   (def options
     (clj->js {
-      :pointDotRadius 1
-      :scaleOverride true
-      :scaleSteps 5
-      :scaleStepWidth 20
-      :scaleStartValue 0
-      :scaleLabel "<%=value%> %"
-    }))
+      :pointDot           false
+      :scaleGridLineColor "#ccc"
+      :scaleOverride      true
+      :scaleSteps         5
+      :scaleStepWidth     20
+      :scaleStartValue    0
+      :scaleLabel         "<%=value%> %"}))
 
   (def data
     (clj->js {
       :datasets [{
           :fillColor   "rgba(100,255,100,0.8)"
-          :strokeColor "rgba(220,220,220,1)"
-          :pointColor  "rgba(220,220,220,1)"
-          :pointStrokeColor "#fff"
+          :strokeColor "#666"
           :data buzzArr }]
       :labels timeArr }))
 
