@@ -33,7 +33,7 @@
       (count eqbf))))
 
 (defn buzz [pic1 pic2]
-  (* 100 (min 1
+  (* 100 (min 1.0
     (* (settings :buzz-multiplier)
       (float
         (normed-inequality (databuffer pic1) (databuffer pic2)))))))
