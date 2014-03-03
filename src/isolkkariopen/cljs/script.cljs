@@ -34,9 +34,9 @@
   (def data
     (clj->js {
       :datasets [{
-          :fillColor   "rgba(100,255,100,0.8)"
-          :strokeColor "#666"
-          :data buzzArr }]
+        :fillColor   "rgba(100,255,100,0.8)"
+        :strokeColor "#666"
+        :data buzzArr }]
       :labels timeArr }))
 
   ; Draw history line chart
