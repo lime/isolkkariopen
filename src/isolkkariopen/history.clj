@@ -109,7 +109,10 @@
     (reset! prev-pic currPic)
     (db-entry currPic prevPic)))
 
-(defn update! [] (insert-entry! (fetch-pic-as-entry!)))
+(defn update! []
+  (try
+    (insert-entry! (fetch-pic-as-entry!))
+    (catch Exception e (prn (.getMessage e)))))
 
 (defn entries []
   "Fetch entries from DB, customizing their display form."
